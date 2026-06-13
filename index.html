@@ -283,6 +283,150 @@ html,body{width:100%;height:100%;background:var(--blk);color:var(--bone);font-fa
 .mf-l{font-family:'Space Mono',monospace;font-size:.44rem;color:var(--muted);letter-spacing:.16em;margin-bottom:.22rem}
 .mf-v{font-size:.7rem;color:var(--bone)}
 .conf-badge{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.2em;color:var(--muted);border:1px solid var(--line);padding:.28rem .85rem;margin-top:1.1rem}
+
+/* ── RESPONSIVE ── */
+
+/* Touch: hide custom cursor */
+@media (hover:none) and (pointer:coarse) {
+  #cur,#cur-ring{display:none}
+  html,body{cursor:auto}
+}
+
+/* Tablet (≤ 1024px): tighten padding */
+@media (max-width:1024px) {
+  :root{font-size:108%}
+  .col-l{padding:2rem 2rem 2rem 2.5rem}
+  .col-r{padding:2rem 2.5rem 2rem 2rem}
+  .vl{padding:2rem 2rem 2rem 2.5rem}
+  .vr{padding:2rem 2.5rem 2rem 2rem}
+  .bl{padding:2rem 2rem 2rem 2.5rem}
+  .br{padding:2rem 2.5rem 2rem 2rem}
+  .pay-l{padding:2rem 2rem 2rem 2.5rem}
+  .pay-r{padding:2rem 2.5rem 2rem 2rem}
+  .terms-l{padding:2rem 2rem 2rem 2.5rem}
+  .terms-r{padding:2rem 2.5rem 2rem 2rem}
+  .ag-col{padding:4rem 1.5rem 1.5rem 2rem}
+  .ag-panel{padding:2rem 2rem 2rem 1.5rem}
+  .scope-hd{padding:.85rem 2rem .75rem}
+  .tl-wrap{padding:0 2rem}
+}
+
+/* Mobile (≤ 768px): stack all columns, enable scrolling */
+@media (max-width:768px) {
+  :root{font-size:96%}
+
+  /* Let slide content scroll vertically */
+  .slide-body{
+    overflow-y:auto;
+    overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;
+    align-items:flex-start !important;
+    padding-bottom:4rem !important
+  }
+
+  /* Stack all two-col grids — height:auto overrides inline height:100% */
+  .split,.ag-layout,.vlayout,.blayout,.pay-layout,.terms-layout{
+    grid-template-columns:1fr !important;
+    height:auto !important;
+    min-height:100%;
+    width:100% !important
+  }
+
+  /* Scope wrap — allow it to grow beyond viewport */
+  .scope-wrap{height:auto !important;min-height:100%}
+
+  /* Left panels: drop right border, add bottom divider */
+  .col-l,.vl,.bl,.pay-l,.terms-l{
+    border-right:none;
+    border-bottom:1px solid var(--line);
+    padding:1.75rem 1.5rem
+  }
+  .col-r,.vr,.br,.pay-r,.terms-r{
+    padding:1.75rem 1.5rem
+  }
+
+  /* Agenda */
+  .ag-col{
+    border-right:none;
+    border-bottom:1px solid var(--line);
+    padding:2rem 1.5rem 1.5rem;
+    overflow:visible
+  }
+  .ag-panel{padding:1.5rem}
+
+  /* Scope */
+  .scope-hd{
+    padding:.75rem 1.5rem;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:.4rem
+  }
+  .scope-hd-r{text-align:left;max-width:100%}
+  .scgrid{
+    grid-template-columns:1fr 1fr !important;
+    grid-template-rows:auto !important
+  }
+  .scc-feat{grid-row:span 1 !important}
+
+  /* Muhurat grid: 3→2 cols */
+  .rgrid{grid-template-columns:1fr 1fr !important}
+
+  /* Hero meta: allow wrapping */
+  .hmeta{flex-wrap:wrap}
+  .hmc{flex:1 0 40%;min-width:0}
+
+  /* Film strips: slightly shorter */
+  .strip{height:22px}
+  .strip-hole{width:11px;height:14px;margin:0 5px}
+  .slide-body{top:22px !important;bottom:22px !important}
+
+  /* Nav: hide side dots on mobile; bigger arrow tap targets */
+  .nav-dots{display:none}
+  .arrow{width:44px;height:44px;font-size:1rem}
+  .nav-arrows{bottom:3px;gap:10px}
+
+  /* Timeline */
+  .tl-wrap{padding:0 1.25rem;text-align:left}
+  .tl-track::before{left:calc(40px + 1rem + 4px)}
+  .tl-t{min-width:40px;font-size:.5rem}
+
+  /* Closing meta footer: 2 cols */
+  .meta-ft{grid-template-columns:1fr 1fr !important}
+
+  /* Payment bank details grid */
+  .pm-grid{grid-template-columns:1fr !important}
+
+  /* Budget right column summary grid */
+  .br [style*="grid-template-columns:repeat(3"]{
+    grid-template-columns:1fr 1fr !important
+  }
+}
+
+/* Small mobile (≤ 480px) */
+@media (max-width:480px) {
+  :root{font-size:88%}
+
+  /* Scope: single column */
+  .scgrid{grid-template-columns:1fr !important}
+
+  /* Muhurat: single column */
+  .rgrid{grid-template-columns:1fr !important}
+
+  /* Hero meta: full-width rows */
+  .hmeta{flex-direction:column}
+  .hmc{flex:none;width:100%;border-right:none;border-bottom:1px solid var(--line)}
+  .hmc:last-child{border-bottom:none}
+
+  /* Closing meta footer: single column */
+  .meta-ft{grid-template-columns:1fr !important}
+
+  /* Payment tier: hide the big number, let info wrap */
+  .pt{grid-template-columns:auto 1fr !important;gap:.6rem}
+  .pt-amount{grid-column:2}
+
+  /* Scope header: reduce font */
+  .scope-hd-r{font-size:.62rem}
+}
 </style>
 </head>
 <body>
@@ -778,18 +922,21 @@ html,body{width:100%;height:100%;background:var(--blk);color:var(--bone);font-fa
 </div>
 
 <script>
-// CURSOR
+// CURSOR — desktop only
 const curEl = document.getElementById('cur');
 const ringEl = document.getElementById('cur-ring');
-let mx = window.innerWidth/2, my = window.innerHeight/2;
-let rx = mx, ry = my;
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-(function anim() {
-  rx += (mx-rx)*.18; ry += (my-ry)*.18;
-  curEl.style.left = mx+'px'; curEl.style.top = my+'px';
-  ringEl.style.left = rx+'px'; ringEl.style.top = ry+'px';
-  requestAnimationFrame(anim);
-})();
+const isTouch = window.matchMedia('(hover:none) and (pointer:coarse)').matches;
+if (!isTouch) {
+  let mx = window.innerWidth/2, my = window.innerHeight/2;
+  let rx = mx, ry = my;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  (function anim() {
+    rx += (mx-rx)*.18; ry += (my-ry)*.18;
+    curEl.style.left = mx+'px'; curEl.style.top = my+'px';
+    ringEl.style.left = rx+'px'; ringEl.style.top = ry+'px';
+    requestAnimationFrame(anim);
+  })();
+}
 document.querySelectorAll('a,button,.ai,.rc,.scc,.tag,.vlink,.pm-card,.pt').forEach(el => {
   el.addEventListener('mouseenter', () => { curEl.style.width='16px'; curEl.style.height='16px'; curEl.style.background='var(--crimson)'; });
   el.addEventListener('mouseleave', () => { curEl.style.width='9px'; curEl.style.height='9px'; curEl.style.background='var(--rose)'; });
