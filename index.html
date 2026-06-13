@@ -50,10 +50,20 @@ html,body{width:100%;height:100%;background:var(--blk);color:var(--bone);font-fa
 .dot{width:4px;height:14px;border-radius:2px;background:var(--muted);border:none;cursor:pointer;transition:all .3s}
 .dot.active{background:var(--crimson);height:24px}
 .dot:hover{background:var(--rose)}
-.nav-arrows{position:fixed;bottom:38px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;z-index:500}
-.arrow{background:var(--crimson);border:none;color:var(--bone);width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.85rem;transition:background .2s}
-.arrow:hover{background:var(--crim-hi)}
-.slide-counter{font-family:'Space Mono',monospace;font-size:.5rem;color:var(--muted);letter-spacing:.15em;min-width:48px;text-align:center}
+/* ── NAV CONTROL (bottom-right) ── */
+.nav-control{position:fixed;bottom:38px;right:1.5rem;z-index:500;display:flex;flex-direction:column;align-items:flex-end;gap:.38rem}
+.nav-info{display:flex;align-items:baseline;gap:.5rem}
+.nav-num{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--bone);line-height:1;letter-spacing:.04em;transition:color .3s}
+.nav-denom{font-family:'Space Mono',monospace;font-size:.42rem;color:var(--muted);letter-spacing:.18em}
+.nav-track{width:68px;height:1px;background:var(--line2);position:relative;margin-bottom:1px}
+.nav-fill{position:absolute;left:0;top:-1px;height:3px;background:var(--crimson);transition:width .6s cubic-bezier(.4,0,.2,1)}
+.nav-btns{display:flex;gap:2px}
+.arrow{background:transparent;border:1px solid var(--crimson);color:var(--rose);width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.8rem;transition:background .2s,color .2s}
+.arrow:hover{background:var(--crimson);color:var(--bone)}
+
+/* ── SWIPE HINT ── */
+.swipe-hint{display:none;position:fixed;bottom:34px;left:50%;transform:translateX(-50%);font-family:'Space Mono',monospace;font-size:.44rem;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;z-index:500;white-space:nowrap;pointer-events:none;border:1px solid var(--line);padding:.22rem .75rem;background:rgba(7,4,10,.7)}
+@keyframes swipeFadeOut{0%{opacity:0}15%{opacity:1}65%{opacity:1}100%{opacity:0}}
 
 /* ── SHARED ── */
 .ey{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.28em;color:var(--rose);text-transform:uppercase;margin-bottom:.65rem}
@@ -286,15 +296,24 @@ html,body{width:100%;height:100%;background:var(--blk);color:var(--bone);font-fa
 
 /* ── RESPONSIVE ── */
 
-/* Touch: hide custom cursor */
-@media (hover:none) and (pointer:coarse) {
+/* ── Touch devices: restore cursor, prevent stuck hover states ── */
+@media (hover:none) {
   #cur,#cur-ring{display:none}
   html,body{cursor:auto}
+  .rc::after,.ai::before,.scc::before{display:none}
+  .rc:hover,.scc:hover,.tag:hover,.vlink:hover,
+  .pm-card:hover,.pt:hover,.bi:hover{background:initial;border-color:initial;color:initial}
 }
 
-/* Tablet (≤ 1024px): tighten padding */
+/* ── ≤ 1200px: large tablet / small laptop ── */
+@media (max-width:1200px) {
+  :root{font-size:114%}
+}
+
+/* ── ≤ 1024px: iPad Pro 12.9" portrait + all landscape tablets ──
+   Keep two-column layouts; tighten spacing only */
 @media (max-width:1024px) {
-  :root{font-size:108%}
+  :root{font-size:103%}
   .col-l{padding:2rem 2rem 2rem 2.5rem}
   .col-r{padding:2rem 2.5rem 2rem 2rem}
   .vl{padding:2rem 2rem 2rem 2.5rem}
@@ -305,26 +324,39 @@ html,body{width:100%;height:100%;background:var(--blk);color:var(--bone);font-fa
   .pay-r{padding:2rem 2.5rem 2rem 2rem}
   .terms-l{padding:2rem 2rem 2rem 2.5rem}
   .terms-r{padding:2rem 2.5rem 2rem 2rem}
-  .ag-col{padding:4rem 1.5rem 1.5rem 2rem}
-  .ag-panel{padding:2rem 2rem 2rem 1.5rem}
+  .ag-col{padding:3.5rem 1.5rem 1.5rem 2rem}
+  .ag-panel{padding:1.75rem 1.5rem}
   .scope-hd{padding:.85rem 2rem .75rem}
   .tl-wrap{padding:0 2rem}
+  /* Hero meta: allow wrapping so items don't overflow */
+  .hmeta{flex-wrap:wrap}
+  .hmc{flex:1 0 auto}
+  .hmc-v{white-space:normal}
 }
 
-/* Mobile (≤ 768px): stack all columns, enable scrolling */
-@media (max-width:768px) {
-  :root{font-size:96%}
+/* ── ≤ 900px: iPad Air 820px, iPad Pro 11" 834px, iPad Mini 744px + all phones ──
+   Stack all two-column layouts, enable per-slide scrolling */
+@media (max-width:900px) {
+  :root{font-size:97%}
 
-  /* Let slide content scroll vertically */
+  /* Scrollable slide body — content can exceed viewport height when stacked */
   .slide-body{
-    overflow-y:auto;
-    overflow-x:hidden;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
     -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+    touch-action:pan-y;
     align-items:flex-start !important;
-    padding-bottom:4rem !important
+    justify-content:flex-start !important;
+    padding-bottom:5.5rem !important
   }
 
-  /* Stack all two-col grids — height:auto overrides inline height:100% */
+  /* Film strips slightly thinner */
+  .strip{height:22px}
+  .strip-hole{width:11px;height:14px;margin:0 5px}
+  .slide-body{top:22px !important;bottom:22px !important}
+
+  /* Stack every two-column grid (inline height:100% overridden by !important) */
   .split,.ag-layout,.vlayout,.blayout,.pay-layout,.terms-layout{
     grid-template-columns:1fr !important;
     height:auto !important;
@@ -332,100 +364,149 @@ html,body{width:100%;height:100%;background:var(--blk);color:var(--bone);font-fa
     width:100% !important
   }
 
-  /* Scope wrap — allow it to grow beyond viewport */
-  .scope-wrap{height:auto !important;min-height:100%}
-
-  /* Left panels: drop right border, add bottom divider */
-  .col-l,.vl,.bl,.pay-l,.terms-l{
-    border-right:none;
-    border-bottom:1px solid var(--line);
-    padding:1.75rem 1.5rem
+  /* Scope: reset flex height, reflow grid to 2 cols */
+  .scope-wrap{height:auto !important;min-height:100%;overflow:visible}
+  .scgrid{
+    grid-template-columns:1fr 1fr !important;
+    grid-template-rows:auto !important;
+    flex:none !important
   }
-  .col-r,.vr,.br,.pay-r,.terms-r{
-    padding:1.75rem 1.5rem
+  .scc-feat{grid-row:span 1 !important}
+  .scope-hd{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:.45rem;
+    padding:.9rem 1.75rem
+  }
+  .scope-hd-r{text-align:left;max-width:100%}
+
+  /* Left panels: swap right border for bottom divider */
+  .col-l,.vl,.bl,.pay-l,.terms-l{
+    border-right:none !important;
+    border-bottom:1px solid var(--line);
+    padding:2rem 1.75rem 1.75rem
+  }
+  .col-r,.vr,.br,.pay-r,.terms-r{padding:2rem 1.75rem 1.75rem}
+  /* Decorative left accent bar → becomes a bottom bar */
+  .col-l::before,.pay-l::before,.terms-l::before{
+    top:auto;width:100%;height:2px;
+    background:linear-gradient(90deg,transparent,var(--crimson),transparent)
   }
 
   /* Agenda */
   .ag-col{
-    border-right:none;
+    border-right:none !important;
     border-bottom:1px solid var(--line);
-    padding:2rem 1.5rem 1.5rem;
-    overflow:visible
+    padding:1.75rem 1.75rem 1.5rem;
+    overflow:visible !important
   }
-  .ag-panel{padding:1.5rem}
+  .ag-panel{padding:1.75rem}
 
-  /* Scope */
-  .scope-hd{
-    padding:.75rem 1.5rem;
-    flex-direction:column;
-    align-items:flex-start;
-    gap:.4rem
-  }
-  .scope-hd-r{text-align:left;max-width:100%}
-  .scgrid{
-    grid-template-columns:1fr 1fr !important;
-    grid-template-rows:auto !important
-  }
-  .scc-feat{grid-row:span 1 !important}
+  /* S1 Hero */
+  .hero-c{padding:0 1.25rem;width:100%}
+  .hmeta{flex-wrap:wrap}
+  .hmc{flex:1 0 33.33%}
+  .hmc-v{white-space:normal;font-size:.62rem}
+  .presented{display:none} /* avoid overlap with nav-control */
 
-  /* Muhurat grid: 3→2 cols */
+  /* S3 Muhurat: 3 → 2 columns */
   .rgrid{grid-template-columns:1fr 1fr !important}
 
-  /* Hero meta: allow wrapping */
-  .hmeta{flex-wrap:wrap}
-  .hmc{flex:1 0 40%;min-width:0}
+  /* S7 Budget: inline 3-col summary → 2 col */
+  .br div[style*="repeat(3"]{grid-template-columns:1fr 1fr !important}
 
-  /* Film strips: slightly shorter */
-  .strip{height:22px}
-  .strip-hole{width:11px;height:14px;margin:0 5px}
-  .slide-body{top:22px !important;bottom:22px !important}
-
-  /* Nav: hide side dots on mobile; bigger arrow tap targets */
-  .nav-dots{display:none}
-  .arrow{width:44px;height:44px;font-size:1rem}
-  .nav-arrows{bottom:3px;gap:10px}
-
-  /* Timeline */
-  .tl-wrap{padding:0 1.25rem;text-align:left}
-  .tl-track::before{left:calc(40px + 1rem + 4px)}
-  .tl-t{min-width:40px;font-size:.5rem}
-
-  /* Closing meta footer: 2 cols */
-  .meta-ft{grid-template-columns:1fr 1fr !important}
-
-  /* Payment bank details grid */
+  /* S8 Payment: single-column payment method grid */
   .pm-grid{grid-template-columns:1fr !important}
 
-  /* Budget right column summary grid */
-  .br [style*="grid-template-columns:repeat(3"]{
-    grid-template-columns:1fr 1fr !important
-  }
+  /* S10 Timeline: left-align, full width */
+  .tl-wrap{padding:0 1.5rem;text-align:left;max-width:100%}
+  .tl-track::before{left:calc(44px + 1.2rem + 4px)}
+  .tl-t{min-width:44px;font-size:.5rem}
+
+  /* S11 Closing */
+  .closing-c{padding:0 1.75rem;max-width:100%}
+  .meta-ft{grid-template-columns:1fr 1fr !important}
+
+  /* Nav */
+  .nav-dots{display:none}
+  .arrow{width:40px;height:40px;font-size:.95rem}
+  .nav-control{bottom:30px;right:1.25rem}
+  .swipe-hint{bottom:30px}
 }
 
-/* Small mobile (≤ 480px) */
-@media (max-width:480px) {
-  :root{font-size:88%}
+/* ── ≤ 640px: phones (portrait) ── */
+@media (max-width:640px) {
+  :root{font-size:91%}
 
-  /* Scope: single column */
-  .scgrid{grid-template-columns:1fr !important}
+  /* Reduce all panel padding */
+  .col-l,.vl,.bl,.pay-l,.terms-l,.ag-col{padding:1.5rem 1.25rem 1.25rem}
+  .col-r,.vr,.br,.pay-r,.terms-r,.ag-panel{padding:1.5rem 1.25rem}
 
-  /* Muhurat: single column */
-  .rgrid{grid-template-columns:1fr !important}
-
-  /* Hero meta: full-width rows */
+  /* S1 Hero: stack meta rows, add side padding */
+  .hero-c{padding:0 .85rem}
   .hmeta{flex-direction:column}
-  .hmc{flex:none;width:100%;border-right:none;border-bottom:1px solid var(--line)}
+  .hmc{width:100%;flex:none;border-right:none;border-bottom:1px solid var(--line)}
   .hmc:last-child{border-bottom:none}
 
-  /* Closing meta footer: single column */
+  /* S3 Muhurat: single column */
+  .rgrid{grid-template-columns:1fr !important}
+  .rc{padding:1rem}
+
+  /* S4 Agenda: expanded note taller on small screens */
+  .ai.open .ai-note{max-height:80px}
+
+  /* S6 Scope: single column */
+  .scgrid{grid-template-columns:1fr !important}
+  .scope-hd{padding:.7rem 1.25rem}
+
+  /* S7 Budget: hide mini bar to reclaim horizontal space */
+  .bi{gap:.4rem}
+  .bi-bar-w{display:none}
+  .bi-v{min-width:76px;font-size:.6rem}
+
+  /* S8 Payment tiers: 2-col grid (number + info); amount below info */
+  .pt{grid-template-columns:auto 1fr !important;gap:.5rem}
+  .pt-amount{grid-column:2;font-size:.64rem;white-space:normal}
+  .pt-num{font-size:1.2rem;min-width:1.4rem}
+
+  /* S10 Timeline */
+  .tl-wrap{padding:0 1rem}
+  .tlr{gap:1rem}
+  .tl-t{min-width:38px;font-size:.46rem}
+  .tl-track::before{left:calc(38px + 1rem + 4px)}
+
+  /* S11 Closing */
+  .closing-c{padding:.5rem 1.25rem}
   .meta-ft{grid-template-columns:1fr !important}
 
-  /* Payment tier: hide the big number, let info wrap */
-  .pt{grid-template-columns:auto 1fr !important;gap:.6rem}
-  .pt-amount{grid-column:2}
+  /* Film strip + slide body offset */
+  .strip{height:20px}
+  .strip-hole{width:10px;height:13px;margin:0 4px}
+  .slide-body{top:20px !important;bottom:20px !important}
 
-  /* Scope header: reduce font */
-  .scope-hd-r{font-size:.62rem}
+  /* Nav */
+  .arrow{width:44px;height:44px;font-size:1rem}
+  .nav-control{bottom:26px;right:.85rem}
+  .swipe-hint{bottom:26px}
+}
+
+/* ── ≤ 420px: very small phones (SE, Galaxy A series) ── */
+@media (max-width:420px) {
+  :root{font-size:83%}
+
+  /* Compact nav counter */
+  .nav-num{font-size:1.6rem}
+  .nav-track{width:50px}
+
+  /* Budget: hide per-item values on tiny screens; keep total */
+  .bi-v{display:none}
+  .bi.tot .bi-v{display:block}
+
+  /* Scope header right text less prominent */
+  .scope-hd-r{font-size:.6rem}
+
+  /* Agenda padding further reduced */
+  .ag-col,.ag-panel{padding:1.25rem 1rem}
 }
 </style>
 </head>
@@ -435,11 +516,20 @@ html,body{width:100%;height:100%;background:var(--blk);color:var(--bone);font-fa
 <div id="cur-ring"></div>
 
 <nav class="nav-dots" id="navDots"></nav>
-<div class="nav-arrows">
-  <button class="arrow" onclick="changeSlide(-1)">&#8592;</button>
-  <div class="slide-counter" id="counter">01 / 11</div>
-  <button class="arrow" onclick="changeSlide(1)">&#8594;</button>
+
+<div class="nav-control">
+  <div class="nav-info">
+    <span class="nav-num" id="navNum">01</span>
+    <span class="nav-denom">/ <span id="navTot">11</span></span>
+  </div>
+  <div class="nav-track"><div class="nav-fill" id="navFill"></div></div>
+  <div class="nav-btns">
+    <button class="arrow" onclick="changeSlide(-1)" aria-label="Previous slide">&#8592;</button>
+    <button class="arrow" onclick="changeSlide(1)" aria-label="Next slide">&#8594;</button>
+  </div>
 </div>
+
+<div class="swipe-hint" id="swipeHint">&#8596;&nbsp; swipe to navigate</div>
 
 <div class="deck">
 
@@ -962,11 +1052,16 @@ buildStrips();
 window.addEventListener('resize', buildStrips);
 
 // SLIDES
-const slides = document.querySelectorAll('.slide');
-const dotsC  = document.getElementById('navDots');
-const ctr    = document.getElementById('counter');
-const total  = slides.length;
+const slides  = document.querySelectorAll('.slide');
+const dotsC   = document.getElementById('navDots');
+const navNum  = document.getElementById('navNum');
+const navFill = document.getElementById('navFill');
+const navTot  = document.getElementById('navTot');
+const total   = slides.length;
 let cur = 0;
+
+navTot.textContent = String(total).padStart(2,'0');
+navFill.style.width = (1/total*100)+'%';
 
 slides.forEach((_,i) => {
   const b = document.createElement('button');
@@ -982,9 +1077,17 @@ function goTo(n) {
   cur = ((n%total)+total)%total;
   slides[cur].classList.add('active');
   dotsC.children[cur].classList.add('active');
-  ctr.textContent = String(cur+1).padStart(2,'0')+' / '+String(total).padStart(2,'0');
+  navNum.textContent  = String(cur+1).padStart(2,'0');
+  navFill.style.width = ((cur+1)/total*100)+'%';
 }
 function changeSlide(d){goTo(cur+d)}
+
+// SWIPE HINT — touch devices only
+if (isTouch) {
+  const hint = document.getElementById('swipeHint');
+  hint.style.display = 'block';
+  hint.style.animation = 'swipeFadeOut 4.5s ease forwards';
+}
 
 document.addEventListener('keydown', e => {
   if(e.key==='ArrowRight'||e.key==='ArrowDown') changeSlide(1);
